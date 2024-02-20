@@ -1,54 +1,63 @@
 package com.mandacarubroker.domain.stock;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-@Table(name ="stock")
-@Entity(name="stock")
+@Table(name = "stock")
+@Entity(name = "stock")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of="id")
+@EqualsAndHashCode(of = "id")
 public class Stock {
 
+    /**
+
+     O identificador único para a ação.
+     Este campo é anotado com {@code @Id} e {@code @GeneratedValue} para indicar que
+     representa a chave primária da entidade de ação. A estratégia {@code GenerationType.UUID}
+     é usada para gerar um UUID único como identificador.
+
+     */
     @Id @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
+    /**
+     *
+     * O símbolo único associado à ação.
+     */
     private String symbol;
+
+    /**
+     * O nome da empresa associada à ação.
+     */
     private String companyName;
+    /**
+     * O preço atual da ação.
+     */
     private double price;
 
-    public Stock(RequestStockDTO requestStockDTO){
+    /**
+     * Constrói um novo objeto Stock com base no RequestStockDTO fornecido.
+     *
+     * Este construtor inicializa um novo objeto Stock. Ele extrai o símbolo,
+     * o nome da empresa e o preço do RequestStockDTO e define os atributos correspondentes do Stock.
+     *
+     * @param requestStockDTO O RequestStockDTO contendo os dados para inicializar o Stock.
+     */
+    public Stock(final RequestStockDTO requestStockDTO) {
         this.symbol = requestStockDTO.symbol();
         this.companyName = requestStockDTO.companyName();
-        this.price = changePrice(requestStockDTO.price(), true);
+        this.price = requestStockDTO.price();
     }
 
-    public double changePrice(double amount, boolean increase) {
-        if (increase) {
-            if (amount < this.price) {
-                return increasePrice(amount);
-            } else {
-                return decreasePrice(amount);
-            }
-        } else {
-            if (amount > this.price) {
-                return increasePrice(amount);
-            } else {
-                return this.decreasePrice(amount);
-            }
-        }
-    }
-
-    public double increasePrice(double amount) {
-        return this.price + amount;
-    }
-
-    public double decreasePrice(double amount) {
-        return this.price - amount;
-    }
 
 }
